@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "372290316083",
+    "firebase_url": "https://fir-chat-uninorte-default-rtdb.firebaseio.com",
+    "project_id": "fir-chat-uninorte",
+    "storage_bucket": "fir-chat-uninorte.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:372290316083:android:8843948276bc94fa8d8046",
+        "android_client_info": {
+          "package_name": "com.example.chat_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "372290316083-9j3mchhbbtccolih50kec0octnccjdg5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyABxn3RKNrCAMe7-5_jBAQZIP-3WdoxbMk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "372290316083-9j3mchhbbtccolih50kec0octnccjdg5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:372290316083:android:fe2e4eb745d153b98d8046",
+        "android_client_info": {
+          "package_name": "com.example.f_chat_template"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "372290316083-9j3mchhbbtccolih50kec0octnccjdg5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyABxn3RKNrCAMe7-5_jBAQZIP-3WdoxbMk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "372290316083-9j3mchhbbtccolih50kec0octnccjdg5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
