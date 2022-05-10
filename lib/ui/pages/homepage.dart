@@ -21,17 +21,6 @@ class HomePage extends StatelessWidget {
     }
   }
 
-  _createChatsAndMessages() async {
-    final currentId = authenticationController.getUid();
-    for (var user in chatController.users) {
-      if (user.id == currentId) continue;
-
-      final chatId = await chatController.getChatId(currentId, user.id);
-      await chatRoomController.createMessages(
-          chatId, currentId, user.id, user.email);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     chatController.fetchChatUsers(authenticationController.getUid());
@@ -64,6 +53,8 @@ class HomePage extends StatelessWidget {
                             receiverEmail: chatController.users[index].email,
                             chatId: chatId,
                             receiverId: chatController.users[index].id,
+                            // TODO: Get it in frontend
+                            keyPhrase: "casade16casade16",
                           ));
                         }
                       },

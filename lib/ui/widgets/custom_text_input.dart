@@ -3,17 +3,19 @@ import 'package:flutter/material.dart';
 class CustomTextInput extends StatelessWidget {
   final String hintText;
   final IconData leading;
-  final Function userTyped;
   final bool obscure;
+
   final TextInputType keyboard;
+
+  final TextEditingController controller;
 
   const CustomTextInput(
       {Key? key,
       required this.hintText,
       required this.leading,
-      required this.userTyped,
       required this.obscure,
-      this.keyboard = TextInputType.text})
+      required this.controller,
+      required this.keyboard})
       : super(key: key);
 
   @override
@@ -24,26 +26,24 @@ class CustomTextInput extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(30),
       ),
-      padding: const EdgeInsets.only(left: 10),
       width: MediaQuery.of(context).size.width * 0.70,
-      child: TextField(
-        //onChanged: userTyped,
+      padding: const EdgeInsets.only(left: 20),
+      child: TextFormField(
+        key: const Key('loginPassord'),
+        controller: controller,
         keyboardType: keyboard,
-        onSubmitted: (value) {},
-        onChanged: (val) => userTyped(val),
-        autofocus: false,
-        obscureText: obscure ? true : false,
+        obscureText: obscure,
         decoration: InputDecoration(
           icon: Icon(
             leading,
             color: Colors.deepPurple,
           ),
           border: InputBorder.none,
-          hintText: hintText,
           hintStyle: const TextStyle(
             fontFamily: 'Poppins',
           ),
         ),
+        validator: (value) {},
       ),
     );
   }

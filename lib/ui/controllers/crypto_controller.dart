@@ -16,7 +16,12 @@ class CryptoController {
     final newKey = await algorithm.newSecretKeyFromBytes(utf8.encode(key));
     final newSecretBox = SecretBox.fromConcatenation(message.secretBox,
         nonceLength: 16, macLength: 0);
-    final clearText = await algorithm.decrypt(newSecretBox, secretKey: newKey);
-    return utf8.decode(clearText);
+    try {
+      final clearText =
+          await algorithm.decrypt(newSecretBox, secretKey: newKey);
+      return utf8.decode(clearText).trim();
+    } catch (e) {
+      return "Encrypted message";
+    }
   }
 }

@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       getPages: [
         GetPage(name: '/', page: () => const FirebaseCentral()),
-        GetPage(name: '/login', page: () => const Login()),
+        GetPage(name: '/login', page: () => const LoginPage()),
         GetPage(name: '/signup', page: () => const Signup()),
         GetPage(name: '/home', page: () => HomePage())
       ],

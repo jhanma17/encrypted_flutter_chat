@@ -3,6 +3,7 @@ import 'package:chat_app/ui/controllers/authentication_controller.dart';
 import 'package:get/get.dart';
 
 import 'package:chat_app/ui/widgets/custom_text_input.dart';
+import 'package:loggy/loggy.dart';
 
 class Signup extends StatefulWidget {
   const Signup({Key? key}) : super(key: key);
@@ -13,49 +14,28 @@ class Signup extends StatefulWidget {
 
 class _SignupPage extends State<Signup> {
   final AuthenticationController authenticationController = Get.find();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
 
-  String _email = "";
-  String _password = "";
-  String _name = "";
   bool _isSigningUp = false;
 
   Future<void> signup() async {
     setState(() {
       _isSigningUp = true;
     });
-    var result = false;
 
     try {
-      result = await authenticationController.signup(_email, _password, _name);
-    } catch (e) {
-      print(e);
-    }
-
-    if (result == true) {
+      await authenticationController.signup(_emailController.text,
+          _passwordController.text, _nameController.text);
       Get.offAllNamed('/');
       return;
+    } catch (e) {
+      logInfo('Error en signup: $e');
     }
 
     setState(() {
       _isSigningUp = false;
-    });
-  }
-
-  void updateEmail(input) {
-    setState(() {
-      _email = input;
-    });
-  }
-
-  void updatePass(input) {
-    setState(() {
-      _password = input;
-    });
-  }
-
-  void updateName(input) {
-    setState(() {
-      _name = input;
     });
   }
 
@@ -99,30 +79,31 @@ class _SignupPage extends State<Signup> {
                   hintText: 'Nombre',
                   leading: Icons.text_format,
                   obscure: false,
-                  userTyped: (value) => updateName(value),
+                  controller: _nameController,
+                  keyboard: TextInputType.text,
                 ),
                 const SizedBox(
-                  height: 0,
+                  height: 2,
                 ),
                 CustomTextInput(
                   hintText: 'Email',
                   leading: Icons.mail,
                   keyboard: TextInputType.emailAddress,
                   obscure: false,
-                  userTyped: (value) => updateEmail(value),
+                  controller: _emailController,
                 ),
                 const SizedBox(
-                  height: 0,
+                  height: 2,
                 ),
                 CustomTextInput(
                   hintText: 'Contraseña',
                   leading: Icons.lock,
                   keyboard: TextInputType.visiblePassword,
                   obscure: true,
-                  userTyped: (value) => updatePass(value),
+                  controller: _passwordController,
                 ),
                 const SizedBox(
-                  height: 30,
+                  height: 10,
                 ),
                 Hero(
                     tag: 'signupbutton',

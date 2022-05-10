@@ -1,6 +1,7 @@
 import 'package:chat_app/models/user.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:get/get.dart';
+import 'package:loggy/loggy.dart';
 import 'package:uuid/uuid.dart';
 
 class HomePageController extends GetxController {
@@ -19,7 +20,7 @@ class HomePageController extends GetxController {
       });
       return chatId;
     } catch (e) {
-      print('Error creando chat: $e');
+      logInfo('Error creating chat: $e');
       return null;
     }
   }
@@ -52,8 +53,9 @@ class HomePageController extends GetxController {
       var newUser =
           ChatUser(event.snapshot.key.toString(), 'no name', data['email']);
 
-      if (event.snapshot.key != currentUserId && !users.contains(newUser))
+      if (event.snapshot.key != currentUserId && !users.contains(newUser)) {
         users.add(newUser);
+      }
     });
   }
 

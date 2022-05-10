@@ -1,5 +1,6 @@
 import 'package:chat_app/ui/controllers/authentication_controller.dart';
 import 'package:chat_app/ui/controllers/chat_room_controller.dart';
+import 'package:chat_app/ui/pages/temp_map.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:chat_app/models/message.dart';
@@ -12,6 +13,9 @@ class ChatRoomPage extends StatelessWidget {
   final String receiverEmail;
   final String receiverId;
   final String chatId;
+  // TODO: Get this key in front
+  // It must be 16 character long
+  final String keyPhrase;
 
   final Color _receiverColor = const Color.fromARGB(255, 234, 237, 255);
   final Color _senderColor = const Color.fromARGB(255, 243, 243, 243);
@@ -20,13 +24,14 @@ class ChatRoomPage extends StatelessWidget {
       {Key? key,
       required this.receiverEmail,
       required this.receiverId,
-      required this.chatId})
+      required this.chatId,
+      required this.keyPhrase})
       : super(key: key);
 
   _sendMessage(content) async {
     final currentUserId = authenticationController.getUid();
     await chatRoomController.sendMessage(
-        chatId, currentUserId, receiverId, content);
+        chatId, currentUserId, receiverId, content, keyPhrase);
   }
 
   Widget _textInput() {
@@ -66,7 +71,8 @@ class ChatRoomPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     chatRoomController.clearMessages();
-    chatRoomController.fetchChatMessages(chatId);
+    chatRoomController.fetchChatMessages(chatId, keyPhrase);
+    chatRoomController.initPos();
 
     return Scaffold(
         appBar: AppBar(
@@ -94,12 +100,40 @@ class ChatRoomPage extends StatelessWidget {
                             : _receiverColor,
                         child: Padding(
                           padding: const EdgeInsets.all(20),
-                          child: Text(
-                              chatRoomController.messages[index].content,
-                              textAlign: isMyMessage(
-                                      chatRoomController.messages[index])
-                                  ? TextAlign.right
-                                  : TextAlign.left),
+                          child: GestureDetector(
+                              onTap: () {
+                                double lat = chatRoomController
+                                    .messages[index].location.lat;
+                                double lng = chatRoomController
+                                    .messages[index].location.lng;
+                                TempMap map = TempMap(lat: lat, lng: lng);
+                                Get.to(map);
+                              },
+                              child: Column(
+                                crossAxisAlignment: isMyMessage(
+                                        chatRoomController.messages[index])
+                                    ? CrossAxisAlignment.end
+                                    : CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                      chatRoomController
+                                          .messages[index].content,
+                                      textAlign: TextAlign.left),
+                                  Text(
+                                      chatRoomController
+                                          .messages[index].ipAddress,
+                                      style: const TextStyle(fontSize: 10),
+                                      textAlign: TextAlign.left),
+                                  Text(
+                                      chatRoomController
+                                              .messages[index].device.model +
+                                          ', ' +
+                                          chatRoomController
+                                              .messages[index].device.device,
+                                      style: const TextStyle(fontSize: 10),
+                                      textAlign: TextAlign.left)
+                                ],
+                              )),
                         ),
                       );
                     },

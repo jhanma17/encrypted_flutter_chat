@@ -1,43 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:loggy/loggy.dart';
 
 import '../controllers/authentication_controller.dart';
 import '../widgets/custom_text_input.dart';
 
-class Login extends StatefulWidget {
-  const Login({Key? key}) : super(key: key);
+class LoginPage extends StatefulWidget {
+  const LoginPage({Key? key}) : super(key: key);
 
   @override
-  _LoginPage createState() => _LoginPage();
+  _LoginPageState createState() => _LoginPageState();
 }
 
-class _LoginPage extends State<Login> {
+class _LoginPageState extends State<LoginPage> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
   final AuthenticationController authenticationController = Get.find();
-  String _email = '';
-  String _password = '';
+
   bool _isLoginIn = false;
 
   Future<void> login() async {
+    FocusScope.of(context).requestFocus(FocusNode());
+
     setState(() {
       _isLoginIn = true;
     });
 
-    var result = await authenticationController.login(_email, _password);
-
-    if (result == false) {
-      _isLoginIn = false;
+    try {
+      await authenticationController.login(
+          _emailController.text, _passwordController.text);
+      return;
+    } catch (e) {
+      logInfo('Error in login: $e');
     }
-  }
 
-  void updateEmail(input) {
     setState(() {
-      _email = input;
-    });
-  }
-
-  void updatePass(input) {
-    setState(() {
-      _password = input;
+      _isLoginIn = false;
     });
   }
 
@@ -77,25 +75,29 @@ class _LoginPage extends State<Login> {
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.01,
                 ),
-                CustomTextInput(
-                  hintText: 'Email',
-                  leading: Icons.mail,
-                  obscure: false,
-                  keyboard: TextInputType.emailAddress,
-                  userTyped: (val) {
-                    updateEmail(val);
-                  },
+                const Text(
+                  "Login with email",
+                  style: TextStyle(fontSize: 20),
                 ),
                 const SizedBox(
-                  height: 0,
+                  height: 20,
                 ),
                 CustomTextInput(
-                  hintText: 'Contraseña',
+                  hintText: 'Correo del usuario',
+                  leading: Icons.person,
+                  obscure: false,
+                  controller: _emailController,
+                  keyboard: TextInputType.emailAddress,
+                ),
+                const SizedBox(
+                  height: 2,
+                ),
+                CustomTextInput(
+                  hintText: 'Password',
                   leading: Icons.lock,
                   obscure: true,
-                  userTyped: (val) {
-                    updatePass(val);
-                  },
+                  controller: _passwordController,
+                  keyboard: TextInputType.text,
                 ),
                 const SizedBox(
                   height: 30,
