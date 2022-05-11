@@ -1,9 +1,11 @@
-## CODE ANALYSIS
-
+## CODE ANALYSIS - FRONT
 https://www.youtube.com/watch?v=AwB9UsXMlUE
 
-## APP PREVIEW
+## CODE ANALYSIS - BACK
+https://drive.google.com/file/d/12PnpzcxuLxfLu0Qbor8BX5Iz4W5YciXR/view?usp=sharing
 
-https://drive.google.com/file/d/1f4qw79YJBxx9KWzbM5ZdwcB5gOPc_wUX/view?usp=sharing
+## FRONTEND PREVIEW
+<img src="app-preview.gif" width="300">
 
-![App preview](./app-preview.gif)
+## BACKEND PREVIEW
+<img src="preview_back.gif" width="300">
