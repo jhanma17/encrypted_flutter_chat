@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:get/get.dart';
@@ -59,5 +61,40 @@ class AuthenticationController extends GetxController {
   String getUserName() {
     String name = "";
     return name;
+  }
+
+  Future<String> getIdByEmail(String email) async {
+    final snapshot = await FirebaseDatabase.instance.ref().child('users').get();
+    if (snapshot.exists) {
+      if (snapshot.value != null) {
+        var users = snapshot.value as Map<dynamic, dynamic>;
+        for (var key in users.keys) {
+          log("key: $key");
+          if (users[key]['email'] == email) {
+            return key.toString();
+          }
+        }
+      }
+    } else {
+      log('No data available.');
+    }
+    return "";
+  }
+
+  Future<String> getEmailById(String id) async {
+    final snapshot = await FirebaseDatabase.instance.ref().child('users').get();
+    if (snapshot.exists) {
+      if (snapshot.value != null) {
+        var users = snapshot.value as Map<dynamic, dynamic>;
+        for (var key in users.keys) {
+          if (key == id) {
+            return users[key]['email'];
+          }
+        }
+      }
+    } else {
+      log('No data available.');
+    }
+    return "";
   }
 }

@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:loggy/loggy.dart';
-import 'config/configuration.dart';
+import 'config/_configuration.dart';
 import 'package:cryptography_flutter/cryptography_flutter.dart';
 
 import 'ui/my_app.dart';

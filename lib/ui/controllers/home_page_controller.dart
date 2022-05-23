@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:chat_app/models/user.dart';
+import 'package:chat_app/ui/controllers/authentication_controller.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:get/get.dart';
 import 'package:loggy/loggy.dart';
@@ -13,11 +16,14 @@ class HomePageController extends GetxController {
 
   createChat(senderId, receiverId) async {
     final chatId = uuid.v4();
+    receiverId = await receiverId;
     try {
       await chatsRef.child('$chatId/participants').set({
         0: senderId,
         1: receiverId,
       });
+      log('senderId: ' + senderId);
+      log('receiverId: ' + receiverId);
       return chatId;
     } catch (e) {
       logInfo('Error creating chat: $e');
@@ -35,11 +41,15 @@ class HomePageController extends GetxController {
     for (var snap in snapshots.children) {
       final data = snap.value as Map<dynamic, dynamic>;
       final participants = data['participants'] as List;
-
-      var validChat =
-          participants.every((id) => id == senderId || id == receiverId);
+      var validChat = false;
+      if (participants[0] == senderId && participants[1] == receiverId) {
+        validChat = true;
+      } else if (participants[0] == receiverId && participants[1] == senderId) {
+        validChat = true;
+      }
 
       if (validChat) {
+        log("chat already exists");
         return snap.key;
       }
     }
@@ -47,16 +57,40 @@ class HomePageController extends GetxController {
     return createChat(senderId, receiverId);
   }
 
-  fetchChatUsers(currentUserId) {
-    usersRef.onChildAdded.listen((DatabaseEvent event) {
-      final data = event.snapshot.value as Map<dynamic, dynamic>;
-      var newUser =
-          ChatUser(event.snapshot.key.toString(), 'no name', data['email']);
-
-      if (event.snapshot.key != currentUserId && !users.contains(newUser)) {
-        users.add(newUser);
+  fetchChatUsers(currentUserId) async {
+    users.clear();
+    final chats = await chatsRef.get();
+    if (!chats.exists) {
+      return;
+    }
+    var data = chats.value as Map<dynamic, dynamic>;
+    for (var key in data.keys) {
+      final participants = data[key]['participants'] as List;
+      if (participants[0] == currentUserId ||
+          participants[1] == currentUserId) {
+        final senderId = participants[0];
+        final receiverId = participants[1];
+        log("sender user: $senderId");
+        log("reciver user: $receiverId");
+        if (currentUserId == senderId) {
+          var email = await AuthenticationController().getEmailById(receiverId);
+          log("email: $email");
+          users.add(ChatUser(
+            receiverId,
+            'not_set',
+            email,
+          ));
+        } else {
+          var email = await AuthenticationController().getEmailById(senderId);
+          log("email: $email");
+          users.add(ChatUser(
+            senderId,
+            'not_set',
+            email,
+          ));
+        }
       }
-    });
+    }
   }
 
   cleanChatRoom() {

@@ -39,6 +39,7 @@ class CustomTextInput extends StatelessWidget {
             color: Colors.deepPurple,
           ),
           border: InputBorder.none,
+          hintText: hintText,
           hintStyle: const TextStyle(
             fontFamily: 'Poppins',
           ),
