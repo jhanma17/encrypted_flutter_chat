@@ -45,6 +45,9 @@ dependencies:
   device_info_plus: ^3.2.3
   geolocator: ^8.2.1
   google_maps_flutter: ^2.1.4
+  firebase_storage: ^10.2.16
+  path_provider: ^2.0.10
+  image_picker: ^0.8.5+3
 
 dev_dependencies:
   flutter_test:

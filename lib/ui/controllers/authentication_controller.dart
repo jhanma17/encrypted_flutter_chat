@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:chat_app/models/user.dart';
 
 class AuthenticationController extends GetxController {
+  var name = '';
   Future<void> login(email, password) async {
     try {
       await FirebaseAuth.instance
@@ -58,9 +59,19 @@ class AuthenticationController extends GetxController {
     return uid;
   }
 
-  String getUserName() {
-    String name = "";
-    return name;
+  Future<String> getUserName() async {
+    final snapshot = await FirebaseDatabase.instance
+        .ref('users/${FirebaseAuth.instance.currentUser!.uid}')
+        .get();
+    if (snapshot.exists) {
+      if (snapshot.value != null) {
+        var user = snapshot.value as Map<dynamic, dynamic>;
+        name = user['name'];
+      }
+    } else {
+      log('No data available.');
+    }
+    return "";
   }
 
   Future<String> getIdByEmail(String email) async {

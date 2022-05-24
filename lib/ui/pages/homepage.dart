@@ -3,11 +3,12 @@ import 'dart:developer';
 import 'package:chat_app/ui/controllers/home_page_controller.dart';
 import 'package:chat_app/ui/controllers/chat_room_controller.dart';
 import 'package:chat_app/ui/pages/chat.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:loggy/loggy.dart';
-
 import '../controllers/authentication_controller.dart';
+import '../controllers/image_controller.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
@@ -23,6 +24,8 @@ class _HomePageState extends State<HomePage> {
 
   final ChatRoomController chatRoomController = Get.find();
 
+  final ImageController imageController = Get.find();
+
   String busqueda = '';
 
   String emailToCreateChat = '';
@@ -34,33 +37,6 @@ class _HomePageState extends State<HomePage> {
   List messages = [];
 
   bool loaded = false;
-  getFirstMessage() async {
-    if (loaded) {
-      return;
-    }
-    messages = [];
-    for (var user in chatController.users) {
-      chatRoomController.clearMessages();
-      var chatId = await chatController.getChatId(
-          authenticationController.getUid(), user.id);
-      chatRoomController.fetchChatMessages(chatId, "casade16casade16");
-      log(chatRoomController.messages.toString());
-      if (chatRoomController.messages.isNotEmpty) {
-        loaded = true;
-        setState(() {
-          messages.add(chatRoomController.messages[0].content);
-        });
-        log(messages.toString());
-      } else {
-        setState(() {
-          messages.add("");
-        });
-        log(messages.toString());
-      }
-    }
-    log(messages.toString());
-  }
-
   _logout() async {
     try {
       await authenticationController.logout();
@@ -74,7 +50,7 @@ class _HomePageState extends State<HomePage> {
     var users = chatController.users;
     var result = [];
     for (var user in users) {
-      if (user.email.toLowerCase().contains(busqueda.toLowerCase())) {
+      if (user.name.toLowerCase().contains(busqueda.toLowerCase())) {
         result.add(user);
       }
     }
@@ -88,9 +64,11 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    chatController.cleanChatRoom();
-    chatController.fetchChatUsers(authenticationController.getUid());
-    getFirstMessage();
+    WidgetsBinding.instance!.addPostFrameCallback((_) async => {
+          await chatController.cleanChatRoom(),
+          await chatController.fetchChatUsers(authenticationController.getUid())
+        });
+
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
@@ -102,6 +80,7 @@ class _HomePageState extends State<HomePage> {
                   if (searchIcon.icon == Icons.search) {
                     searchBar = TextField(
                       onChanged: (value) {
+                        chatController.cleanChatRoom();
                         setState(() {
                           busqueda = value;
                         });
@@ -131,6 +110,12 @@ class _HomePageState extends State<HomePage> {
                 onPressed: () {
                   chatController.cleanChatRoom();
                   _logout();
+                }),
+            IconButton(
+                icon: const Icon(Icons.person_outlined),
+                onPressed: () {
+                  chatController.cleanChatRoom();
+                  Get.toNamed('/profile');
                 }),
           ],
         ),
@@ -165,13 +150,14 @@ class _HomePageState extends State<HomePage> {
                       FlatButton(
                         child: const Text("Create"),
                         onPressed: () async {
+                          chatController.cleanChatRoom();
+                          Navigator.of(context).pop();
                           await chatController.getChatId(
                               authenticationController.getUid(),
                               authenticationController
                                   .getIdByEmail(emailToCreateChat));
                           await chatController.fetchChatUsers(
                               authenticationController.getUid());
-                          Navigator.of(context).pop();
                         },
                       ),
                     ],
@@ -196,7 +182,6 @@ class _HomePageState extends State<HomePage> {
                             receiverEmail: chatController.users[index].email,
                             chatId: chatId,
                             receiverId: chatController.users[index].id,
-                            // TODO: Get it in frontend
                             keyPhrase: "casade16casade16",
                           ));
                         }
@@ -207,7 +192,22 @@ class _HomePageState extends State<HomePage> {
                               child: Container(
                                 child: Column(children: [
                                   Row(children: [
-                                    Text(chatController.users[index].email,
+                                    Container(
+                                        width: 40.0,
+                                        height: 40.0,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          image: DecorationImage(
+                                              image: chatController
+                                                          .users[index].image !=
+                                                      ''
+                                                  ? NetworkImage(chatController
+                                                      .users[index].image)
+                                                  : NetworkImage(
+                                                          'https://img.blogs.es/anexom/wp-content/uploads/2020/06/pestana-de-incognito-navegacion-oculta.jpg')
+                                                      as ImageProvider),
+                                        )),
+                                    Text(chatController.users[index].name,
                                         style: TextStyle(
                                             fontSize: 20,
                                             fontWeight: FontWeight.bold))

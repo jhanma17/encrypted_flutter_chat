@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:chat_app/ui/controllers/authentication_controller.dart';
 import 'package:get/get.dart';
-
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:chat_app/ui/widgets/custom_text_input.dart';
 import 'package:loggy/loggy.dart';
 

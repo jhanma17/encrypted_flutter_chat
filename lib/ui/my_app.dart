@@ -1,4 +1,5 @@
 import 'package:chat_app/ui/controllers/chat_room_controller.dart';
+import 'package:chat_app/ui/controllers/image_controller.dart';
 import 'package:chat_app/ui/pages/homepage.dart';
 import 'package:chat_app/ui/pages/login.dart';
 import 'package:chat_app/ui/pages/signup.dart';
@@ -8,6 +9,7 @@ import 'package:get/get.dart';
 import 'controllers/authentication_controller.dart';
 import 'controllers/home_page_controller.dart';
 import './firebase_central.dart';
+import 'pages/profile.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -17,6 +19,7 @@ class MyApp extends StatelessWidget {
     Get.put(HomePageController());
     Get.put(AuthenticationController());
     Get.put(ChatRoomController());
+    Get.put(ImageController());
 
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
@@ -29,7 +32,8 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/', page: () => const FirebaseCentral()),
         GetPage(name: '/login', page: () => const LoginPage()),
         GetPage(name: '/signup', page: () => const Signup()),
-        GetPage(name: '/home', page: () => HomePage())
+        GetPage(name: '/home', page: () => HomePage()),
+        GetPage(name: '/profile', page: () => ProfilePage())
       ],
     );
   }

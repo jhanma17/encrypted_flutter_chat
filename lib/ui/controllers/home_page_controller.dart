@@ -58,7 +58,6 @@ class HomePageController extends GetxController {
   }
 
   fetchChatUsers(currentUserId) async {
-    users.clear();
     final chats = await chatsRef.get();
     if (!chats.exists) {
       return;
@@ -74,26 +73,40 @@ class HomePageController extends GetxController {
         log("reciver user: $receiverId");
         if (currentUserId == senderId) {
           var email = await AuthenticationController().getEmailById(receiverId);
-          log("email: $email");
-          users.add(ChatUser(
-            receiverId,
-            'not_set',
-            email,
-          ));
+          final name = await usersRef.child(receiverId).get();
+          var nameString = email;
+          var image = '';
+          if (name.value != null) {
+            var namevalue = name.value as Map<dynamic, dynamic>;
+            nameString = namevalue['name'];
+            image = namevalue['image'] == null ? '' : namevalue['image'];
+          }
+          users.add(ChatUser(receiverId, nameString, email, image));
         } else {
           var email = await AuthenticationController().getEmailById(senderId);
-          log("email: $email");
-          users.add(ChatUser(
-            senderId,
-            'not_set',
-            email,
-          ));
+          final name = await usersRef.child(senderId).get();
+          var nameString = email;
+          var image = '';
+          if (name.value != null) {
+            var namevalue = name.value as Map<dynamic, dynamic>;
+            nameString = namevalue['name'];
+            image = namevalue['image'] == null ? '' : namevalue['image'];
+          }
+          users.add(ChatUser(senderId, nameString, email, image));
         }
       }
     }
   }
 
+  fetchUser(userId) async {
+    var snapshot = await usersRef.child(userId).get();
+    if (snapshot.exists) {
+      return snapshot.value;
+    }
+  }
+
   cleanChatRoom() {
+    log('cleanChatRoom');
     users.clear();
   }
 }
