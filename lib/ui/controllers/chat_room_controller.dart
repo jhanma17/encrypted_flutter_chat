@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:chat_app/models/messageLocation.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -38,6 +39,7 @@ class ChatRoomController extends GetxController {
         .onChildAdded
         .listen((DatabaseEvent event) async {
       final data = event.snapshot.value as Map<dynamic, dynamic>;
+      log('data: $data');
       Device device = Device.fromJson(data["device"]);
       MessageLocation msgPos = MessageLocation.fromJson(data["position"]);
 
@@ -48,7 +50,7 @@ class ChatRoomController extends GetxController {
           data['timestamp'],
           data['cipherText'],
           data['nonce'],
-          data['ipAddress'],
+          data['ipAddress'] == null ? '' : data['ipAddress'],
           device,
           msgPos);
       message.content = await crypto.decrypt(message, encryptKey);
@@ -58,6 +60,11 @@ class ChatRoomController extends GetxController {
   }
 
   sendMessage(chatId, senderId, receiverId, content, encryptKey) async {
+    log('chatId: $chatId');
+    log('senderId: $senderId');
+    log('receiverId: $receiverId');
+    log('content: $content');
+    log('encryptKey: $encryptKey');
     final messageId = uuid.v4();
     var wifiIP = await networkInfo.getWifiIP();
     AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;

@@ -36,6 +36,7 @@ class MapScreenState extends State<ProfilePage>
   @override
   void initState() {
     super.initState();
+    imageController.getImage(FirebaseAuth.instance.currentUser!.uid);
   }
 
   @override
@@ -119,6 +120,7 @@ class MapScreenState extends State<ProfilePage>
                                         .pickImage(source: ImageSource.gallery);
                                     File imageFile = File(image!.path);
                                     imageController.uploadImage(imageFile);
+                                    setState(() {});
                                   },
                                   child: const CircleAvatar(
                                     backgroundColor: Colors.red,
